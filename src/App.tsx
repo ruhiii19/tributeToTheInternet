@@ -741,7 +741,7 @@ const App: React.FC = () => {
               </a>
               <a
                 href={`https://wa.me/?text=${encodeURIComponent(
-                  "Highway to Hell yeah! Visit the Coolest places on the internet and yes we have big red button you can push! Ps: Don't open before important deadlines."
+                  "https://tribute-to-the-internet.vercel.app Highway to Hell yeah! Visit the Coolest places on the internet and yes we have big red button you can push! Ps: Don't open before important deadlines."
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
