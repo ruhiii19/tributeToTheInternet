@@ -434,12 +434,12 @@ const ManifestoPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
 const PeekingManifesto: React.FC<{ onClick: () => void }> = ({ onClick }) => (
   <div
-    className="fixed top-10 right-[-340px] z-50 cursor-pointer"
-    style={{ transform: "rotate(-12deg)" }}
+    className="fixed top-1/2 right-[-340px] z-50 cursor-pointer"
+    style={{ transform: "translateY(-60%) rotate(-12deg)" }}
     onClick={onClick}
   >
     <div className="bg-white p-6 shadow-lg w-[489px] h-[415px] gilroy-medium flex">
-      <h1 className="uppercase gilroy-medium text-[#9A9C9C] text-xs">
+      <h1 className="uppercase gilroy-medium text-[#9A9C9C] text-sm">
         Our better internet
         <br /> manifesto.
       </h1>
@@ -454,10 +454,10 @@ const FullManifesto: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       opacity: 0,
     },
     to: {
-      transform: "translateX(0) rotate(0deg) scale(1)",
+      transform: "translateX(30vw) rotate(0deg) scale(1)",
       opacity: 1,
     },
-    config: { duration: 900 },
+    config: { duration: 1000 },
   });
 
   return (
@@ -512,6 +512,7 @@ const App: React.FC = () => {
   const [showRainbowGlow, setShowRainbowGlow] = useState(false);
   const [showManifestoPopup, setShowManifestoPopup] = useState(false);
   const [showFullManifesto, setShowFullManifesto] = useState(false);
+  const [showSharePopup, setShowSharePopup] = useState(false);
   // Button bounce animation (2 bounces)
   const [buttonBounceProps, buttonBounceApi] = useSpring(() => ({
     scale: 1,
@@ -723,6 +724,41 @@ const App: React.FC = () => {
       {showFullManifesto && (
         <FullManifesto onClose={() => setShowFullManifesto(false)} />
       )}
+      {showSharePopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
+            <h2 className="text-lg mb-4 gilroy-bold">Share this site</h2>
+            <div className="flex gap-4 mb-4">
+              <a
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                  "Check out this awesome site! " + window.location.href
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Twitter
+              </a>
+              <a
+                href={`https://wa.me/?text=${encodeURIComponent(
+                  "Check out this awesome site! : https://tribute-to-the-internet.vercel.app"
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              >
+                WhatsApp
+              </a>
+            </div>
+            <button
+              onClick={() => setShowSharePopup(false)}
+              className="text-black border border-black rounded px-4 py-1"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
@@ -880,7 +916,10 @@ const App: React.FC = () => {
                   <h2 className="mb-2 mt-12 gilroy-bold text-[24px] text-right">
                     Share
                   </h2>
-                  <button className="py-1 text-sm border border-black rounded-md hover:bg-black hover:text-white transition-colors gilroy-regular flex items-center text-nowrap px-2 group">
+                  <button
+                    className="py-1 text-sm border border-black rounded-md hover:bg-black hover:text-white transition-colors gilroy-regular flex items-center text-nowrap px-2 group"
+                    onClick={() => setShowSharePopup(true)}
+                  >
                     <div className="flex flex-row items-center">
                       <img
                         src={MegaphoneSimple}
