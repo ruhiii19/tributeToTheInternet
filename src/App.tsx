@@ -3,7 +3,6 @@ import { useSpring, animated } from "@react-spring/web";
 import CloseIcon from "@mui/icons-material/Close";
 import LinkIcon from "@mui/icons-material/Link";
 import PersonIcon from "@mui/icons-material/Person";
-import CampaignIcon from "@mui/icons-material/Campaign";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import background from "./assets/images/background.svg";
 import buttonImage from "./assets/images/button.svg";
@@ -13,6 +12,10 @@ import ohShitImage from "./assets/images/ohShit.svg";
 import fistImage from "./assets/images/HandFist.svg";
 import bounceArrow from "./assets/images/bounceArrow.svg";
 import bonVoyageArrow from "./assets/images/bonVoyageArrow.svg";
+import arunsDucky from "./assets/images/arunsDucky.svg";
+import ruhisPanda from "./assets/images/ruhisPanda.svg";
+import MegaphoneSimple from "./assets/images/MegaphoneSimple.svg";
+import boredHumans from "./assets/images/boredHumans.svg";
 
 const SHEET_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vT4s0r3GV_9ZySl_exblzb6O4OgGvtRTncht4Kb6dYLg_cNR_cFx4onC1eXeOMaNUTgSrksFNSZMV3B/pub?output=csv";
@@ -66,6 +69,7 @@ const CookieConsent: React.FC<{
   onAccept: () => void;
   onDecline: () => void;
 }> = ({ onAccept, onDecline }) => {
+  const [showFullManifesto, setShowFullManifesto] = useState(false);
   return (
     <div className="fixed inset-0 bg-black z-50 flex flex-col">
       {/* Main content */}
@@ -164,12 +168,20 @@ const CookieConsent: React.FC<{
       </div>
 
       {/* Text overlay */}
-      <div className="relative z-10 text-center py-8">
-        <p className="text-black text-sm font-medium">
+      <div className="relative z-10 text-center py-4">
+        <p className="text-black gilroy-bold">
           We don't make money with your data.
         </p>
-        <p className="text-black text-xs">Or any money at all actually.</p>
+        <p className="text-black gilroy-regular">
+          Or any money at all actually.
+        </p>
       </div>
+      {!showFullManifesto && (
+        <PeekingManifesto onClick={() => setShowFullManifesto(true)} />
+      )}
+      {showFullManifesto && (
+        <FullManifesto onClose={() => setShowFullManifesto(false)} />
+      )}
     </div>
   );
 };
@@ -378,6 +390,112 @@ const SubmitLinkPopUp: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   );
 };
 
+const ManifestoPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-end p-4">
+      <div
+        className="bg-white p-6 shadow-lg w-[489px] h-[415px] gilroy-medium"
+        style={{
+          backgroundClip: "padding-box, border-box",
+          transform: "rotate(-8deg)",
+        }}
+      >
+        <div className="flex flex-col h-full">
+          <div className="flex justify-between items-center mb-6 relative">
+            <h1 className="uppercase gilroy-medium text-[#9A9C9C]">
+              Our better internet manifesto
+            </h1>
+            <CloseIcon
+              sx={{ fontSize: 24 }}
+              onClick={onClose}
+              className="text-black border border-black rounded-full p-1 absolute right-0"
+            />
+          </div>
+
+          <ol className="text-black gilroy-regular space-y-1 list-decimal pl-4">
+            <li>Contribute to the internet / Collaborate when possible.</li>
+            <li>Share love, knowledge and opinions.</li>
+            <li>Always give feedback / Report broken things.</li>
+            <li>Take NSFW tags seriously.</li>
+            <li>Be political.</li>
+            <li>Share cat/dog memes. Afterall internet was made for it.</li>
+            <li>Be mindful before pressing any button that says "Allow".</li>
+            <li>Correct your posture.</li>
+            <li>Don't forget to blink.</li>
+            <li>Stay hydrated.</li>
+            <li>Never share your OTP.</li>
+            <li>Don't Zuck up the internet.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const PeekingManifesto: React.FC<{ onClick: () => void }> = ({ onClick }) => (
+  <div
+    className="fixed top-10 right-[-340px] z-50 cursor-pointer"
+    style={{ transform: "rotate(-12deg)" }}
+    onClick={onClick}
+  >
+    <div className="bg-white p-6 shadow-lg w-[489px] h-[415px] gilroy-medium flex">
+      <h1 className="uppercase gilroy-medium text-[#9A9C9C] text-xs">
+        Our better internet
+        <br /> manifesto.
+      </h1>
+    </div>
+  </div>
+);
+
+const FullManifesto: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+  const spring = useSpring({
+    from: {
+      transform: "translateX(100vw) rotate(25deg) scale(0.6)",
+      opacity: 0,
+    },
+    to: {
+      transform: "translateX(0) rotate(0deg) scale(1)",
+      opacity: 1,
+    },
+    config: { duration: 900 },
+  });
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <animated.div
+        style={spring}
+        className="bg-white shadow-lg w-[489px] h-[415px] gilroy-medium relative flex flex-col p-6"
+      >
+        <div className="flex justify-between items-center mb-6 relative">
+          <h1 className="uppercase gilroy-medium text-[#9A9C9C]">
+            Our better internet manifesto
+          </h1>
+          <CloseIcon
+            sx={{ fontSize: 24 }}
+            onClick={onClose}
+            className="text-black border border-black rounded-full p-1 absolute right-0"
+          />
+        </div>
+
+        <ol className="text-black gilroy-regular space-y-1 list-decimal pl-4">
+          <li>Contribute to the internet / Collaborate when possible.</li>
+          <li>Share love, knowledge and opinions.</li>
+          <li>Always give feedback / Report broken things.</li>
+          <li>Take NSFW tags seriously.</li>
+          <li>Be political.</li>
+          <li>Share cat/dog memes. Afterall internet was made for it.</li>
+          <li>Be mindful before pressing any button that says "Allow".</li>
+          <li>Correct your posture.</li>
+          <li>Don't forget to blink.</li>
+          <li>Stay hydrated.</li>
+          <li>Never share your OTP.</li>
+          <li>Don't Zuck up the internet.</li>
+        </ol>
+      </animated.div>
+    </div>
+  );
+};
+
 const App: React.FC = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [websites, setWebsites] = useState<Website[]>([]);
@@ -392,7 +510,8 @@ const App: React.FC = () => {
     "idle" | "bouncing" | "pathway"
   >("idle");
   const [showRainbowGlow, setShowRainbowGlow] = useState(false);
-
+  const [showManifestoPopup, setShowManifestoPopup] = useState(false);
+  const [showFullManifesto, setShowFullManifesto] = useState(false);
   // Button bounce animation (2 bounces)
   const [buttonBounceProps, buttonBounceApi] = useSpring(() => ({
     scale: 1,
@@ -598,6 +717,12 @@ const App: React.FC = () => {
       {showSubmitLinkPopUp && (
         <SubmitLinkPopUp onClose={() => setShowSubmitLinkPopUp(false)} />
       )}
+      {showManifestoPopup && (
+        <ManifestoPopup onClose={() => setShowManifestoPopup(false)} />
+      )}
+      {showFullManifesto && (
+        <FullManifesto onClose={() => setShowFullManifesto(false)} />
+      )}
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
@@ -717,10 +842,11 @@ const App: React.FC = () => {
       <div className="relative z-30 min-h-screen flex flex-col">
         {/* Header */}
         {animationPhase !== "pathway" && (
-          <div className="text-center pt-8 text-[#858585] gilroy-medium">
-            <p>Curated by</p>
-            <p>Bored humans</p>
-          </div>
+          <img
+            src={boredHumans}
+            alt="Bored Humans"
+            className="absolute top-8 left-1/2 transform -translate-x-1/2 w-[180px] h-[108px]"
+          />
         )}
 
         {/* Main Content */}
@@ -730,17 +856,41 @@ const App: React.FC = () => {
             <div className="flex flex-col justify-center -translate-y-8 text-black h-full relative z-30">
               <div className="pl-24 flex flex-row items-center gap-24 gilroy-medium">
                 <div>
-                  <h2 className="mb-2">Creators:</h2>
+                  <h2 className="mb-2 mt-12">Creators:</h2>
                   <div className="space-y-1">
-                    <div>Arun Koushik</div>
-                    <div>Ruhi Panjwani</div>
+                    <div className="flex flex-row text-nowrap items-center gap-2">
+                      <img
+                        src={arunsDucky}
+                        alt="Arun Koushik"
+                        className="w-10 h-10"
+                      />
+                      Arun Koushik
+                    </div>
+                    <div className="flex flex-row text-nowrap items-center gap-2">
+                      <img
+                        src={ruhisPanda}
+                        alt="Ruhi Panjwani"
+                        className="w-10 h-10"
+                      />
+                      Ruhi Panjwani
+                    </div>
                   </div>
                 </div>
                 <div>
-                  <h2 className="mb-2 gilroy-bold">Share</h2>
-                  <button className="px-4 py-1 text-sm border border-black rounded-full hover:bg-black hover:text-white transition-colors gilroy-regular flex items-center gap-2">
-                    <CampaignIcon sx={{ fontSize: 20 }} />
-                    Blow your friend's mind
+                  <h2 className="mb-2 mt-12 gilroy-bold text-[24px] text-right">
+                    Share
+                  </h2>
+                  <button className="py-1 text-sm border border-black rounded-md hover:bg-black hover:text-white transition-colors gilroy-regular flex items-center text-nowrap px-2 group">
+                    <div className="flex flex-row items-center">
+                      <img
+                        src={MegaphoneSimple}
+                        alt="Megaphone Simple"
+                        className="group-hover:brightness-0 group-hover:invert"
+                      />
+                      <div className="ml-2 mr-4 text-[12px]">
+                        Blow your friend's mind
+                      </div>
+                    </div>
                   </button>
                 </div>
               </div>
@@ -850,11 +1000,13 @@ const App: React.FC = () => {
             <div className="flex flex-col justify-center -translate-y-8 text-black h-full relative z-30">
               <div className="pr-24 flex flex-row items-center gap-24">
                 <div>
-                  <h2 className="mb-2 gilroy-bold">Include</h2>
+                  <h2 className="mb-2 mt-12 gilroy-bold text-[24px]">
+                    Include
+                  </h2>
                   <div className="flex flex-row items-center gap-3">
                     <button
                       onClick={() => setUsefulStuffEnabled(!usefulStuffEnabled)}
-                      className={`px-3 py-0.5 text-xs border border-black rounded-md transition-colors whitespace-nowrap gilroy-regular ${
+                      className={`px-3 py-0.5 border border-black rounded-md transition-colors whitespace-nowrap gilroy-regular text-[12px] ${
                         usefulStuffEnabled
                           ? "bg-black text-white"
                           : "bg-white text-black"
@@ -864,7 +1016,7 @@ const App: React.FC = () => {
                     </button>
                     <button
                       onClick={() => setNsfwEnabled(!nsfwEnabled)}
-                      className={`px-3 py-0.5 text-xs border border-black rounded-md transition-colors whitespace-nowrap gilroy-regular ${
+                      className={`px-3 py-0.5 border border-black rounded-md transition-colors whitespace-nowrap gilroy-regular text-[12px] ${
                         nsfwEnabled
                           ? "bg-black text-white"
                           : "bg-white text-black"
@@ -874,7 +1026,7 @@ const App: React.FC = () => {
                     </button>
                   </div>
                 </div>
-                <div>
+                <div className="flex flex-col items-end mt-12">
                   <div className="space-y-2 whitespace-nowrap text-right gilroy-medium">
                     <div
                       className="block text-black hover:opacity-70"
@@ -885,9 +1037,12 @@ const App: React.FC = () => {
                     <a href="#" className="block text-black hover:opacity-70">
                       Buy us a donut
                     </a>
-                    <a href="#" className="block text-black hover:opacity-70">
+                    <div
+                      className="block text-black hover:opacity-70"
+                      onClick={() => setShowManifestoPopup(true)}
+                    >
                       Our internet manifesto
-                    </a>
+                    </div>
                   </div>
                 </div>
               </div>
