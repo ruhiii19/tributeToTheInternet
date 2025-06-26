@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useSpring, animated } from "@react-spring/web";
-import CloseIcon from "@mui/icons-material/Close";
 import background from "./assets/images/background.svg";
 import buttonImage from "./assets/images/button.svg";
 import bounceArrow from "./assets/images/bounceArrow.svg";
@@ -82,6 +81,11 @@ const App: React.FC = () => {
   const [showManifestoPopup, setShowManifestoPopup] = useState(false);
   const [showFullManifesto, setShowFullManifesto] = useState(false);
   const [showSharePopup, setShowSharePopup] = useState(false);
+  const [trapezoidBaseWidth, setTrapezoidBaseWidth] = useState(0.55); // 70% width by default
+  const [trapezoidTopWidth, setTrapezoidTopWidth] = useState(0.1); // 10% width by default
+  const [trapezoidBlur, setTrapezoidBlur] = useState(40); // Blur intensity
+  const [trapezoidFilterRegion, setTrapezoidFilterRegion] = useState(40); // Filter region percentage
+  const [showBonVoyage, setShowBonVoyage] = useState(false); // Track when to show BON VOYAGE text
   // Button bounce animation (2 bounces)
   const [buttonBounceProps, buttonBounceApi] = useSpring(() => ({
     scale: 1,
@@ -94,22 +98,26 @@ const App: React.FC = () => {
     config: { tension: 300, friction: 20 },
   }));
 
-  // Pathway animation with mask
-  const [pathwayProps, pathwayApi] = useSpring(() => ({
+  // Trapezoid pathway animation
+  const [trapezoidProps, trapezoidApi] = useSpring(() => ({
     opacity: 0,
-    maskPosition: 100, // 100 = hidden, 0 = fully revealed
+    height: 0, // Start with 0 height
+    top: 0,
+    config: { tension: 300, friction: 20 }, // Original config
   }));
 
-  const [pathwayTextProps, pathwayTextApi] = useSpring(() => ({
+  const [trapezoidTextProps, trapezoidTextApi] = useSpring(() => ({
     opacity: 0,
     y: 40,
+    config: { tension: 400, friction: 25 },
   }));
 
   const resetAnimations = () => {
     buttonGlowApi.start({ opacity: 0 });
     buttonBounceApi.start({ scale: 1 });
-    pathwayApi.start({ opacity: 0, maskPosition: 100 });
-    pathwayTextApi.start({ opacity: 0, y: 40 });
+    trapezoidApi.start({ opacity: 0, height: 0, top: 0 });
+    trapezoidTextApi.start({ opacity: 0, y: 40 });
+    setShowBonVoyage(false);
   };
 
   useEffect(() => {
@@ -198,22 +206,45 @@ const App: React.FC = () => {
         buttonBounceApi.start({
           scale: 1,
           onRest: () => {
-            // Start second bounce
-            setShowRainbowGlow(true);
-            buttonBounceApi.start({
-              scale: 1.08,
+            buttonGlowApi.start({ opacity: 0 });
+            setShowRainbowGlow(false);
+            setAnimationPhase("pathway");
+
+            // Start trapezoid pathway animation sequence
+            // trapezoidTextApi.start({ opacity: 1, y: 0 }); // Moved to after step 3 starts
+
+            // Step 1: Grow to medium size (about 30% of viewport height)
+            setTrapezoidBlur(70);
+            setTrapezoidFilterRegion(60);
+            trapezoidApi.start({
+              opacity: 1,
+              height: window.innerHeight * 0.25,
+              top: 0,
               onRest: () => {
-                buttonBounceApi.start({
-                  scale: 1,
+                // Step 2: Shrink to small size (about 20% of viewport height)
+                setTrapezoidBaseWidth(0.5);
+                setTrapezoidTopWidth(0.01);
+                setTrapezoidBlur(25);
+                setTrapezoidFilterRegion(5);
+                trapezoidApi.start({
+                  height: window.innerHeight * 0.1,
+                  top: 0,
+                  config: { tension: 400, friction: 30 }, // Fast but not springy for step 2
                   onRest: () => {
-                    buttonGlowApi.start({ opacity: 0 });
-                    setShowRainbowGlow(false);
-                    setAnimationPhase("pathway");
-                    pathwayTextApi.start({ opacity: 1, y: 0 });
-                    // Start pathway animation
-                    pathwayApi.start({
-                      opacity: 1,
-                      maskPosition: 0,
+                    // Step 3: Expand to full pathway (100% of viewport height)
+                    setTrapezoidBaseWidth(0.6); // Restore base width for step 3
+                    setTrapezoidTopWidth(0.1); // Restore top width for step 3
+                    setTrapezoidBlur(40); // Medium blur for step 3
+                    setTrapezoidFilterRegion(40); // Medium filter region for step 3
+
+                    // Start the text animation when step 3 begins
+                    trapezoidTextApi.start({ opacity: 1, y: 0 });
+                    setShowBonVoyage(true);
+
+                    trapezoidApi.start({
+                      height: window.innerHeight,
+                      top: 0, // Keep at bottom since we're using full height
+                      config: { tension: 600, friction: 40 }, // Fast but not springy for step 3
                       onRest: () => {
                         // After pathway animation completes, proceed with site navigation
                         const filteredWebsites = websites.filter((website) => {
@@ -417,30 +448,62 @@ const App: React.FC = () => {
           ></div>
         </div>
 
-        {/* Rainbow Pathway Overlay - covers the entire spotlight area, z-10 so button is above */}
-        <animated.div
-          className="absolute top-0 left-0 w-full h-full pointer-events-none z-10"
+        {/* Glowy Magical Trapezoid - SVG with blur for soft, glowy edges (aligned to pathway) */}
+        <animated.svg
+          width="100vw"
+          height="1000"
           style={{
-            clipPath: "polygon(45% 0, 55% 0, 70% 100%, 30% 100%)",
-            WebkitClipPath: "polygon(45% 0, 55% 0, 70% 100%, 30% 100%)",
-            background: `linear-gradient(to top, #F4958E, #FFAAF7, #9193FC, #B4F6FE, #B0FFC0, #FEFF9D, #F3D9A0)`,
-            opacity: pathwayProps.opacity,
-            filter: "blur(24px)",
-            maskImage: pathwayProps.maskPosition.to(
-              (pos) =>
-                `linear-gradient(to top, black 0%, black ${
-                  100 - pos
-                }%, transparent ${100 - pos}%, transparent 100%)`
-            ),
-            WebkitMaskImage: pathwayProps.maskPosition.to(
-              (pos) =>
-                `linear-gradient(to top, black 0%, black ${
-                  100 - pos
-                }%, transparent ${100 - pos}%, transparent 100%)`
-            ),
-            transition: "opacity 0.2s",
+            position: "absolute",
+            left: 0,
+            bottom: 0,
+            zIndex: 1000,
+            pointerEvents: "none",
+            opacity: trapezoidProps.opacity,
           }}
-        />
+          viewBox="0 0 1000 1000"
+        >
+          <defs>
+            <linearGradient id="trapezoidGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#F4958E" />
+              <stop offset="20%" stopColor="#FFAAF7" />
+              <stop offset="40%" stopColor="#9193FC" />
+              <stop offset="60%" stopColor="#B4F6FE" />
+              <stop offset="80%" stopColor="#B0FFC0" />
+              <stop offset="90%" stopColor="#FEFF9D" />
+              <stop offset="100%" stopColor="#F3D9A0" />
+            </linearGradient>
+            <filter
+              id="blurMe"
+              x={`-${trapezoidFilterRegion}%`}
+              y={`-${trapezoidFilterRegion}%`}
+              width={`${100 + 2 * trapezoidFilterRegion}%`}
+              height={`${100 + 2 * trapezoidFilterRegion}%`}
+            >
+              <feGaussianBlur stdDeviation={trapezoidBlur} />
+            </filter>
+          </defs>
+          <animated.polygon
+            fill="url(#trapezoidGradient)"
+            filter="url(#blurMe)"
+            points={trapezoidProps.height.to((h) => {
+              const W = 1000;
+              const baseWidth = trapezoidBaseWidth; // 0.7 for 70%, 0.4 for 40%, etc.
+              const topWidth = trapezoidTopWidth; // 0.1 for 10%, etc.
+              const baseLeftX = (0.5 - baseWidth / 2) * W;
+              const baseRightX = (0.5 + baseWidth / 2) * W;
+              const topLeftX = (0.5 - topWidth / 2) * W;
+              const topRightX = (0.5 + topWidth / 2) * W;
+              // Animate only the y of the top points
+              const topY = 1000 - h;
+              return `
+                ${baseLeftX},1000
+                ${baseRightX},1000
+                ${topRightX},${topY}
+                ${topLeftX},${topY}
+              `;
+            })}
+          />
+        </animated.svg>
       </div>
 
       {/* Content */}
@@ -506,14 +569,14 @@ const App: React.FC = () => {
 
             {/* Center Column */}
             <div className="flex flex-col items-center h-full relative gilroy-black">
-              {animationPhase === "pathway" ? (
+              {showBonVoyage ? (
                 <animated.div
                   className="absolute w-full text-center"
                   style={{
                     top: "40%",
                     left: 0,
-                    opacity: pathwayTextProps.opacity,
-                    transform: pathwayTextProps.y.to(
+                    opacity: trapezoidTextProps.opacity,
+                    transform: trapezoidTextProps.y.to(
                       (y) => `translateY(${y}px)`
                     ),
                     pointerEvents: "none",
