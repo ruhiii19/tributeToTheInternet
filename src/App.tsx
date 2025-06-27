@@ -103,7 +103,7 @@ const App: React.FC = () => {
     opacity: 0,
     height: 0, // Start with 0 height
     top: 0,
-    config: { tension: 300, friction: 20 }, // Original config
+    config: { tension: 300, friction: 20, mass: 1 }, // Original config
   }));
 
   const [trapezoidTextProps, trapezoidTextApi] = useSpring(() => ({
@@ -229,7 +229,7 @@ const App: React.FC = () => {
                 trapezoidApi.start({
                   height: window.innerHeight * 0.1,
                   top: 0,
-                  config: { tension: 400, friction: 30 }, // Fast but not springy for step 2
+                  config: { tension: 300, friction: 30, mass: 0.8 }, // Elastic and bouncy for step 2
                   onRest: () => {
                     // Step 3: Expand to full pathway (100% of viewport height)
                     setTrapezoidBaseWidth(0.6); // Restore base width for step 3
@@ -244,30 +244,34 @@ const App: React.FC = () => {
                     trapezoidApi.start({
                       height: window.innerHeight,
                       top: 0, // Keep at bottom since we're using full height
-                      config: { tension: 600, friction: 40 }, // Fast but not springy for step 3
+                      config: { tension: 900, friction: 25, mass: 0.2 }, // Fast and elastic for step 3
                       onRest: () => {
-                        // After pathway animation completes, proceed with site navigation
-                        const filteredWebsites = websites.filter((website) => {
-                          if (website.isNsfw && !nsfwEnabled) return false;
-                          if (website.isUseful && !usefulStuffEnabled)
-                            return false;
-                          return true;
-                        });
-                        const randomSite =
-                          filteredWebsites.length === 0
-                            ? websites[
-                                Math.floor(Math.random() * websites.length)
-                              ]
-                            : filteredWebsites[
-                                Math.floor(
-                                  Math.random() * filteredWebsites.length
-                                )
-                              ];
-                        setLastVisitedSite(randomSite);
-                        setShowLastVisited(true);
-                        addVisitedSite(randomSite.url);
-                        window.open(randomSite.url, "_blank");
-                        setTimeout(() => setAnimationPhase("idle"), 1000);
+                        // After pathway animation completes, wait a couple seconds then proceed with site navigation
+                        setTimeout(() => {
+                          const filteredWebsites = websites.filter(
+                            (website) => {
+                              if (website.isNsfw && !nsfwEnabled) return false;
+                              if (website.isUseful && !usefulStuffEnabled)
+                                return false;
+                              return true;
+                            }
+                          );
+                          const randomSite =
+                            filteredWebsites.length === 0
+                              ? websites[
+                                  Math.floor(Math.random() * websites.length)
+                                ]
+                              : filteredWebsites[
+                                  Math.floor(
+                                    Math.random() * filteredWebsites.length
+                                  )
+                                ];
+                          setLastVisitedSite(randomSite);
+                          setShowLastVisited(true);
+                          addVisitedSite(randomSite.url);
+                          window.open(randomSite.url, "_blank");
+                          setTimeout(() => setAnimationPhase("idle"), 1000);
+                        }, 500); // Wait 2 seconds before navigating
                       },
                     });
                   },
