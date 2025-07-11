@@ -40,7 +40,7 @@ const LastVisitedPopup: React.FC<LastVisitedPopupProps> = ({
             ✕
           </button>
         </div>
-        <div className="space-y-1 mb-4">
+        <div className="space-y-2">
           <div className="gilroy-bold text-black">{website.title}</div>
           <div className="flex items-center gap-2">
             <a
@@ -58,6 +58,14 @@ const LastVisitedPopup: React.FC<LastVisitedPopupProps> = ({
               title="Copy URL"
             >
               <ContentCopyIcon sx={{ fontSize: 20 }} />
+            </button>
+          </div>
+          <div className="flex items-center gap-2 mb-0">
+            <button className="text-sm gilroy-regular text-white bg-black px-2 py-1 rounded-md block flex-1">
+              Tell others
+            </button>
+            <button className="text-sm gilroy-regular text-black underline block flex-1">
+              Report Website
             </button>
           </div>
         </div>

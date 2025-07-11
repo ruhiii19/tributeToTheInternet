@@ -12,7 +12,6 @@ import ResponsiveColorScheme from "./components/ResponsiveColorScheme";
 import SubmitLinkPopUp from "./components/SubmitLinkPopUp";
 import LastVisitedPopup from "./components/LastVisitedPopup";
 import CookieConsent from "./components/CookieConsent";
-import FullManifesto from "./components/FullManifesto";
 import ManifestoPopup from "./components/ManifestoPopup";
 import { Website } from "./types/siteSpecs";
 
@@ -79,7 +78,6 @@ const App: React.FC = () => {
   >("idle");
   const [showRainbowGlow, setShowRainbowGlow] = useState(false);
   const [showManifestoPopup, setShowManifestoPopup] = useState(false);
-  const [showFullManifesto, setShowFullManifesto] = useState(false);
   const [showSharePopup, setShowSharePopup] = useState(false);
   const [trapezoidBaseWidth, setTrapezoidBaseWidth] = useState(0.55); // 70% width by default
   const [trapezoidTopWidth, setTrapezoidTopWidth] = useState(0.1); // 10% width by default
@@ -271,7 +269,7 @@ const App: React.FC = () => {
                           addVisitedSite(randomSite.url);
                           window.open(randomSite.url, "_blank");
                           setTimeout(() => setAnimationPhase("idle"), 1000);
-                        }, 500); // Wait 2 seconds before navigating
+                        }, 500); // Wait a few seconds before navigating
                       },
                     });
                   },
@@ -324,9 +322,6 @@ const App: React.FC = () => {
       )}
       {showManifestoPopup && (
         <ManifestoPopup onClose={() => setShowManifestoPopup(false)} />
-      )}
-      {showFullManifesto && (
-        <FullManifesto onClose={() => setShowFullManifesto(false)} />
       )}
       {showSharePopup && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">

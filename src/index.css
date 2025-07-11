@@ -51,11 +51,6 @@ code {
   animation: custom-bounce 0.8s cubic-bezier(0.36, 0, 0.66, -0.56) forwards;
 }
 
-button:hover:not(:disabled) {
-  transform: scale(1.05);
-  transition: transform 0.2s ease-in-out;
-}
-
 @font-face {
   font-family: 'Gilroy Black';
   src: url('./assets/fonts/Gilroy-Black.ttf') format('truetype');
