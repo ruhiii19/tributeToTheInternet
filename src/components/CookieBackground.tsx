@@ -64,7 +64,7 @@ function generateNonOverlappingRects(
   return rects;
 }
 
-const INITIAL_RECT_COUNT = 30;
+const INITIAL_RECT_COUNT = 20;
 const SQUARE_SIZE = 32; // px
 
 const CookieBackground: React.FC = () => {
