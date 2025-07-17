@@ -5,6 +5,7 @@ import ohShitImage from "../assets/images/ohShit.svg";
 import fistImage from "../assets/images/HandFist.svg";
 import PeekingManifesto from "./PeekingManifesto";
 import FullManifesto from "./FullManifesto";
+import CookieBackground from "./CookieBackground";
 
 interface CookieConsentProps {
   onAccept: () => void;
@@ -19,8 +20,13 @@ const CookieConsent: React.FC<CookieConsentProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black z-50 flex flex-col">
+      {/* Brick/rectangle background */}
+      <CookieBackground />
       {/* Main content */}
-      <div className="flex-1 flex flex-col items-center justify-top pt-16 px-4 relative z-10">
+      <div
+        className="flex-1 flex flex-col items-center justify-top pt-16 px-4 relative z-10"
+        style={{ pointerEvents: "none" }}
+      >
         <div className="max-w-md text-center text-white">
           <h2 className="text-5xl gilroy-bold mb-4">Cookies please.</h2>
           <p className="text-l mb-12 gilroy-regular">
@@ -34,6 +40,7 @@ const CookieConsent: React.FC<CookieConsentProps> = ({
                   "linear-gradient(91deg, #F4958E -6.19%, #FFAAF7 8.73%, #9193FC 37.19%, #B4F6FE 64.62%, #B0FFC0 80.65%, #FEFF9D 94.63%, #F3D9A0 109.66%)",
                 boxShadow: "1px 2px 0px 0px #FFF",
                 borderRadius: "36px",
+                pointerEvents: "auto",
               }}
               className="w-[464px] h-20 p-6 text-black gilroy-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
             >
@@ -44,6 +51,7 @@ const CookieConsent: React.FC<CookieConsentProps> = ({
             <button
               onClick={onDecline}
               className="w-[464px] h-15 py-6 px-4 bg-[#323232] rounded-[16px] text-gray-400  transition-colors gilroy-regular"
+              style={{ pointerEvents: "auto" }}
             >
               Naaah I'm good
             </button>

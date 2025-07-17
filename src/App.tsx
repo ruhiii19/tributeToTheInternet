@@ -84,6 +84,9 @@ const App: React.FC = () => {
   const [trapezoidBlur, setTrapezoidBlur] = useState(40); // Blur intensity
   const [trapezoidFilterRegion, setTrapezoidFilterRegion] = useState(40); // Filter region percentage
   const [showBonVoyage, setShowBonVoyage] = useState(false); // Track when to show BON VOYAGE text
+  const [showIntroOverlay, setShowIntroOverlay] = useState(false);
+  const [introOverlayVisible, setIntroOverlayVisible] = useState(false); // for fade out
+  const [introTextVisible, setIntroTextVisible] = useState(false); // for text animation
   // Button bounce animation (2 bounces)
   const [buttonBounceProps, buttonBounceApi] = useSpring(() => ({
     scale: 1,
@@ -285,6 +288,18 @@ const App: React.FC = () => {
   const handleCookieConsent = (accepted: boolean) => {
     setCookieConsent(accepted);
     setShowCookieConsent(false);
+    setShowIntroOverlay(true);
+    setIntroOverlayVisible(true);
+    setIntroTextVisible(false);
+    setTimeout(() => {
+      setIntroTextVisible(true); // trigger text animation
+    }, 100); // slight delay for smoother effect
+    setTimeout(() => {
+      setIntroOverlayVisible(false); // start fade out
+      setTimeout(() => {
+        setShowIntroOverlay(false); // unmount overlay
+      }, 600); // match fade duration
+    }, 1200); // how long overlay stays visible before fade out
   };
 
   const handleLastVisitedClose = () => {
@@ -305,6 +320,27 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-black">
+      {/* Intro Overlay */}
+      {showIntroOverlay && (
+        <div
+          className={`fixed inset-0 z-[100] flex items-center justify-center transition-opacity duration-700 ease-in-out ${
+            introOverlayVisible ? "opacity-100" : "opacity-0"
+          }`}
+          style={{ background: "rgba(0,0,0,0.92)" }}
+        >
+          <div
+            className={`gilroy-regular text-white text-4xl text-center px-8 transition-all duration-700 ease-in-out transform ${
+              introTextVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-12"
+            }`}
+          >
+            A tribute to the
+            <br />
+            <span className="gilroy-bold">internet we love</span>
+          </div>
+        </div>
+      )}
       {showCookieConsent && (
         <CookieConsent
           onAccept={() => handleCookieConsent(true)}
@@ -521,7 +557,7 @@ const App: React.FC = () => {
           <div className="w-full grid grid-cols-3 gap-4">
             {/* Left Column */}
             <div className="flex flex-col justify-center -translate-y-8 text-black h-full relative z-30">
-              <div className="pl-24 flex flex-row items-center gap-24 gilroy-medium">
+              <div className="pl-20 flex flex-row items-center gap-24 gilroy-medium">
                 <div>
                   <h2 className="mb-2 mt-12">Creators:</h2>
                   <div className="space-y-1">

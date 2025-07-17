@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import LinkIcon from "@mui/icons-material/Link";
 import PersonIcon from "@mui/icons-material/Person";
@@ -13,6 +13,20 @@ const SubmitLinkPopUp: React.FC<SubmitLinkPopUpProps> = ({ onClose }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    // Trigger entrance animation
+    setIsVisible(true);
+  }, []);
+
+  // Helper to handle closing with animation
+  const handleClose = () => {
+    setIsVisible(false);
+    setTimeout(() => {
+      onClose();
+    }, 350); // match transition duration
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +55,7 @@ const SubmitLinkPopUp: React.FC<SubmitLinkPopUpProps> = ({ onClose }) => {
       // we'll assume success if we get here
       setSuccess(true);
       setTimeout(() => {
-        onClose();
+        handleClose();
       }, 2000);
     } catch (err) {
       console.error("Submission error:", err);
@@ -52,9 +66,20 @@ const SubmitLinkPopUp: React.FC<SubmitLinkPopUpProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-end ">
+    <div
+      className={`fixed inset-0 z-50 flex items-center justify-end transition-opacity duration-300 ease-in-out ${
+        isVisible
+          ? "bg-black bg-opacity-50 opacity-100"
+          : "bg-black bg-opacity-0 opacity-0"
+      }`}
+      style={{ pointerEvents: isVisible ? "auto" : "none" }}
+    >
       <div
-        className="bg-white p-6 rounded-2xl shadow-lg w-[320px] h-[446px] gilroy-medium"
+        className={`bg-white p-6 rounded-2xl shadow-lg w-[320px] h-[446px] gilroy-medium transition-all duration-350 ease-in-out transform ${
+          isVisible
+            ? "translate-x-0 scale-100 opacity-100"
+            : "translate-x-10 scale-95 opacity-0"
+        }`}
         style={{
           border: "4px solid transparent",
           backgroundImage:
@@ -81,7 +106,7 @@ const SubmitLinkPopUp: React.FC<SubmitLinkPopUpProps> = ({ onClose }) => {
                 to the collective, Nerd.
               </div>
               <button
-                onClick={onClose}
+                onClick={handleClose}
                 className="text-black rounded-full h-[24px] w-[24px] flex items-center justify-center border border-black"
               >
                 <CloseIcon sx={{ fontSize: 16 }} />
