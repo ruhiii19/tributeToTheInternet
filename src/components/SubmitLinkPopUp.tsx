@@ -38,7 +38,7 @@ const SubmitLinkPopUp: React.FC<SubmitLinkPopUpProps> = ({ onClose }) => {
         "https://script.google.com/macros/s/AKfycbwtugJxQbZ95XRHtBKnmb2knvaGJkdTllWfEPMP05N6AW_qrfJ-97xjZXIHFTfjm2RV/exec";
 
       // Use no-cors mode and different content type
-      const response = await fetch(SCRIPT_URL, {
+      await fetch(SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
         body: JSON.stringify({
