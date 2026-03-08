@@ -66,7 +66,6 @@ const setCookieConsent = (consent: boolean) => {
 const App: React.FC = () => {
   //const [isAnimating, setIsAnimating] = useState(false);
   const [websites, setWebsites] = useState<Website[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [showCookieConsent, setShowCookieConsent] = useState(false);
   const [usefulStuffEnabled, setUsefulStuffEnabled] = useState(false);
   const [nsfwEnabled, setNsfwEnabled] = useState(false);
@@ -94,7 +93,7 @@ const App: React.FC = () => {
   }));
 
   // Button white glow
-  const [buttonGlowProps, buttonGlowApi] = useSpring(() => ({
+  const [, buttonGlowApi] = useSpring(() => ({
     opacity: 0,
     config: { tension: 300, friction: 20 },
   }));
@@ -189,7 +188,7 @@ const App: React.FC = () => {
           }))
         );
       } finally {
-        setIsLoading(false);
+        // loading complete
       }
     };
 
@@ -290,6 +289,7 @@ const App: React.FC = () => {
     document.addEventListener("visibilitychange", handleVisibility);
     return () =>
       document.removeEventListener("visibilitychange", handleVisibility);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -692,9 +692,12 @@ const App: React.FC = () => {
                     >
                       Submit link
                     </div>
-                    <a href="#" className="block text-black hover:opacity-70">
+                    <button
+                      className="block text-black hover:opacity-70 bg-transparent border-none cursor-pointer p-0 gilroy-medium text-right w-full"
+                      onClick={() => {}}
+                    >
                       Buy us a donut
-                    </a>
+                    </button>
                     <div
                       className="block text-black hover:opacity-70"
                       onClick={() => setShowManifestoPopup(true)}
