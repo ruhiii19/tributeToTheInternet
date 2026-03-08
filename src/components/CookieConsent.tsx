@@ -19,7 +19,7 @@ const CookieConsent: React.FC<CookieConsentProps> = ({
   const [showFullManifesto, setShowFullManifesto] = useState(false);
 
   return (
-    <div className="fixed inset-0 bg-black z-50 flex flex-col">
+    <div className="fixed inset-0 bg-black z-50 flex flex-col overflow-hidden">
       {/* Brick/rectangle background */}
       <CookieBackground />
       {/* Main content */}
@@ -63,7 +63,7 @@ const CookieConsent: React.FC<CookieConsentProps> = ({
       <div
         className="absolute left-1/2 -translate-x-1/2"
         style={{
-          bottom: "calc(-195% + 1516px - 6px)", // Circle bottom position + circle height - half dino height
+          bottom: '94px',
           zIndex: 2,
         }}
       >
@@ -74,7 +74,7 @@ const CookieConsent: React.FC<CookieConsentProps> = ({
       <div
         className="absolute left-[35%] -translate-x-1/3"
         style={{
-          bottom: "calc(-195% + 1516px + 60px)", // Circle bottom position + circle height + some height
+          bottom: '160px',
           zIndex: 2,
         }}
       >
@@ -85,7 +85,7 @@ const CookieConsent: React.FC<CookieConsentProps> = ({
       <div
         className="absolute right-[30%] -translate-x-1/3"
         style={{
-          bottom: "calc(-195% + 1516px + 60px)", // Circle bottom position + circle height + some height
+          bottom: '160px',
           zIndex: 2,
         }}
       >
@@ -95,7 +95,7 @@ const CookieConsent: React.FC<CookieConsentProps> = ({
       {/* Semi-circle with glow */}
       <div
         className="absolute left-1/2 -translate-x-1/2"
-        style={{ bottom: "-195%" }}
+        style={{ bottom: '-1416px' }}
       >
         {/* Glow effect */}
         <div
