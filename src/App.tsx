@@ -87,10 +87,10 @@ const App: React.FC = () => {
   const [showIntroOverlay, setShowIntroOverlay] = useState(false);
   const [introOverlayVisible, setIntroOverlayVisible] = useState(false); // for fade out
   const [introTextVisible, setIntroTextVisible] = useState(false); // for text animation
-  // Button bounce animation (2 bounces)
+  // Button bounce animation
   const [buttonBounceProps, buttonBounceApi] = useSpring(() => ({
     scale: 1,
-    config: { tension: 700, friction: 18 }, // fast and snappy
+    config: { tension: 300, friction: 22 },
   }));
 
   // Button white glow
@@ -109,15 +109,15 @@ const App: React.FC = () => {
 
   const [trapezoidTextProps, trapezoidTextApi] = useSpring(() => ({
     opacity: 0,
-    y: 40,
-    config: { tension: 400, friction: 25 },
+    y: 200,
+    config: { tension: 120, friction: 28 },
   }));
 
   const resetAnimations = () => {
     buttonGlowApi.start({ opacity: 0 });
     buttonBounceApi.start({ scale: 1 });
     trapezoidApi.start({ opacity: 0, height: 0, top: 0 });
-    trapezoidTextApi.start({ opacity: 0, y: 40 });
+    trapezoidTextApi.start({ opacity: 0, y: 200 });
     setShowBonVoyage(false);
   };
 
@@ -198,85 +198,59 @@ const App: React.FC = () => {
 
   const handleButtonClick = () => {
     if (websites.length === 0 || animationPhase !== "idle") return;
-    setAnimationPhase("bouncing");
-    // Start first bounce
-    buttonGlowApi.start({ opacity: 1 });
-    buttonBounceApi.start({
-      scale: 1.08,
+    setAnimationPhase("pathway");
+    setShowRainbowGlow(false);
+
+    // Set trapezoid shape
+    setTrapezoidBaseWidth(0.6);
+    setTrapezoidTopWidth(0.1);
+    setTrapezoidBlur(40);
+    setTrapezoidFilterRegion(40);
+
+    // Step 1: Pulse up to small height (no text yet)
+    trapezoidApi.start({
+      opacity: 1,
+      height: window.innerHeight * 0.25,
+      top: 0,
+      config: { tension: 200, friction: 28 },
       onRest: () => {
-        buttonBounceApi.start({
-          scale: 1,
+        // Step 2: Collapse back to bottom
+        trapezoidApi.start({
+          height: 0,
+          top: 0,
+          config: { tension: 250, friction: 26 },
           onRest: () => {
-            buttonGlowApi.start({ opacity: 0 });
-            setShowRainbowGlow(false);
-            setAnimationPhase("pathway");
+            // Step 3: Spread open and grow to full height + reveal text
+            setTrapezoidBaseWidth(0.7);
+            setTrapezoidTopWidth(0.15);
+            setTrapezoidBlur(42);
+            setTrapezoidFilterRegion(42);
+            setShowBonVoyage(true);
+            trapezoidTextApi.start({ opacity: 1, y: 0 });
 
-            // Start trapezoid pathway animation sequence
-            // trapezoidTextApi.start({ opacity: 1, y: 0 }); // Moved to after step 3 starts
-
-            // Step 1: Grow to medium size (about 30% of viewport height)
-            setTrapezoidBlur(70);
-            setTrapezoidFilterRegion(60);
             trapezoidApi.start({
-              opacity: 1,
-              height: window.innerHeight * 0.25,
+              height: window.innerHeight,
               top: 0,
+              config: { tension: 150, friction: 28, mass: 1 },
               onRest: () => {
-                // Step 2: Shrink to small size (about 20% of viewport height)
-                setTrapezoidBaseWidth(0.5);
-                setTrapezoidTopWidth(0.01);
-                setTrapezoidBlur(25);
-                setTrapezoidFilterRegion(5);
-                trapezoidApi.start({
-                  height: window.innerHeight * 0.1,
-                  top: 0,
-                  config: { tension: 300, friction: 30, mass: 0.8 }, // Elastic and bouncy for step 2
-                  onRest: () => {
-                    // Step 3: Expand to full pathway (100% of viewport height)
-                    setTrapezoidBaseWidth(0.6); // Restore base width for step 3
-                    setTrapezoidTopWidth(0.1); // Restore top width for step 3
-                    setTrapezoidBlur(40); // Medium blur for step 3
-                    setTrapezoidFilterRegion(40); // Medium filter region for step 3
-
-                    // Start the text animation when step 3 begins
-                    trapezoidTextApi.start({ opacity: 1, y: 0 });
-                    setShowBonVoyage(true);
-
-                    trapezoidApi.start({
-                      height: window.innerHeight,
-                      top: 0, // Keep at bottom since we're using full height
-                      config: { tension: 900, friction: 25, mass: 0.2 }, // Fast and elastic for step 3
-                      onRest: () => {
-                        // After pathway animation completes, wait a couple seconds then proceed with site navigation
-                        setTimeout(() => {
-                          const filteredWebsites = websites.filter(
-                            (website) => {
-                              if (website.isNsfw && !nsfwEnabled) return false;
-                              if (website.isUseful && !usefulStuffEnabled)
-                                return false;
-                              return true;
-                            }
-                          );
-                          const randomSite =
-                            filteredWebsites.length === 0
-                              ? websites[
-                                  Math.floor(Math.random() * websites.length)
-                                ]
-                              : filteredWebsites[
-                                  Math.floor(
-                                    Math.random() * filteredWebsites.length
-                                  )
-                                ];
-                          setLastVisitedSite(randomSite);
-                          setShowLastVisited(true);
-                          addVisitedSite(randomSite.url);
-                          window.open(randomSite.url, "_blank");
-                          setTimeout(() => setAnimationPhase("idle"), 1000);
-                        }, 500); // Wait a few seconds before navigating
-                      },
-                    });
-                  },
-                });
+                setTimeout(() => {
+                  const filteredWebsites = websites.filter((website) => {
+                    if (website.isNsfw && !nsfwEnabled) return false;
+                    if (website.isUseful && !usefulStuffEnabled) return false;
+                    return true;
+                  });
+                  const randomSite =
+                    filteredWebsites.length === 0
+                      ? websites[Math.floor(Math.random() * websites.length)]
+                      : filteredWebsites[
+                          Math.floor(Math.random() * filteredWebsites.length)
+                        ];
+                  setLastVisitedSite(randomSite);
+                  setShowLastVisited(true);
+                  addVisitedSite(randomSite.url);
+                  window.open(randomSite.url, "_blank");
+                  setTimeout(() => setAnimationPhase("idle"), 1000);
+                }, 500);
               },
             });
           },
@@ -334,6 +308,10 @@ const App: React.FC = () => {
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-12"
             }`}
+            style={{
+              textShadow:
+                "0 0 20px rgba(255,255,255,0.6), 0 0 60px rgba(255,255,255,0.3), 0 0 100px rgba(255,255,255,0.15)",
+            }}
           >
             A tribute to the
             <br />
